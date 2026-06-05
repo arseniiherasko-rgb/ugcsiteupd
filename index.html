@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-title" content="UGC">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23000'/%3E%3Cpolygon points='70,55 70,125 130,90' fill='%23fff'/%3E%3C/svg%3E">
+<title>UGC</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    background: #000;
+    color: #fff;
+    overscroll-behavior: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .device-wrap {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+  }
+  .device {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    background: #000;
+  }
+  @media (min-width: 600px) {
+    .device {
+      width: 390px;
+      height: 800px;
+      max-height: 95vh;
+      border-radius: 48px;
+      box-shadow: 0 0 0 11px #1a1a1a, 0 0 0 13px #2a2a2a, 0 30px 80px rgba(0,0,0,0.5);
+    }
+    .device::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 30px;
+      background: #1a1a1a;
+      border-radius: 20px;
+      z-index: 100;
+      pointer-events: none;
+    }
+  }
+
+  .video-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: none;
+  }
+  .video-layer.active { opacity: 1; }
+
+  .tap-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: opacity 0.4s ease;
+  }
+  .tap-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tap-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    animation: tapPulse 1.6s ease-in-out infinite;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  @keyframes tapPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+    50%      { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255,255,255,0); }
+  }
+  .tap-icon svg { width: 40px; height: 40px; color: #fff; }
+  .tap-text {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .tap-sub {
+    margin-top: 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .choices {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 0) + 40px);
+    left: 0;
+    right: 0;
+    padding: 0 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 20;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.34, 1.56, .64, 1);
+    pointer-events: none;
+  }
+  .choices.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .choices.hiding {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+  }
+
+  .choice-btn {
+    width: 100%;
+    background: rgba(255,255,255,0.92);
+    color: #000;
+    border: none;
+    border-radius: 999px;
+    padding: 18px 22px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: btnIn 0.5s cubic-bezier(.34, 1.56, .64, 1) backwards;
+  }
+  .choices.show .choice-btn:nth-child(1) { animation-delay: 0.0s; }
+  .choices.show .choice-btn:nth-child(2) { animation-delay: 0.12s; }
+  .choices.show .choice-btn:nth-child(3) { animation-delay: 0.24s; }
+  @keyframes btnIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .choice-btn:active {
+    transform: scale(0.96);
+    background: #fff;
+  }
+  .choice-btn.primary {
+    background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(236, 72, 153, 0.5);
+  }
+  .choice-btn.primary:active {
+    background: linear-gradient(135deg, #db2777 0%, #e11d48 100%);
+  }
+
+  .mute-btn {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0) + 16px);
+    right: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 30;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .mute-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .mute-btn:active { transform: scale(0.9); }
+  .mute-btn svg { width: 20px; height: 20px; }
+  @media (min-width: 600px) {
+    .mute-btn { top: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="device-wrap">
+  <div class="device">
+    <video class="video-layer active" id="videoA" playsinline webkit-playsinline preload="auto"></video>
+    <video class="video-layer" id="videoB" playsinline webkit-playsinline preload="auto"></video>
+
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()" aria-label="Toggle sound">
+      <svg id="muteIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+      </svg>
+      <svg id="muteIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <line x1="23" y1="9" x2="17" y2="15"/>
+        <line x1="17" y1="9" x2="23" y2="15"/>
+      </svg>
+    </button>
+
+    <div class="choices" id="choices">
+      <button class="choice-btn primary" onclick="playVideo('dance')">💃 Dance for me</button>
+      <button class="choice-btn" onclick="playVideo('kiss')">💋 Blow a kiss</button>
+      <button class="choice-btn" onclick="playVideo('around')">🔄 Turn around</button>
+    </div>
+
+    <div class="tap-overlay" id="tapOverlay" onclick="startExperience()">
+      <div class="tap-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+      </div>
+      <div class="tap-text">Tap to start</div>
+      <div class="tap-sub">Sound enabled</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================
+  // CONFIG
+  // ============================================
+
+  // Время в МИЛЛИСЕКУНДАХ, через которое появятся кнопки после старта.
+  // 6000 = 6 секунд. Подбери под длину хук-фразы.
+  const SHOW_BUTTONS_AFTER_MS = 6000;
+
+  // Пути к видео в папке videos/
+  const VIDEOS = {
+    hook:   "videos/ugchook.mp4",     // стартовый хук
+    dance:  "videos/ugcdance.mp4",    // Dance for me
+    kiss:   "videos/ugckiss.mp4",     // Blow a kiss
+    around: "videos/ugcaround.mp4"    // Turn around
+  };
+
+  // ============================================
+  // LOGIC
+  // ============================================
+
+  const videoA = document.getElementById("videoA");
+  const videoB = document.getElementById("videoB");
+  const choices = document.getElementById("choices");
+  const muteBtn = document.getElementById("muteBtn");
+  const tapOverlay = document.getElementById("tapOverlay");
+
+  let activeVideo = videoA;
+  let inactiveVideo = videoB;
+  let showButtonsTimer = null;
+  let isMuted = false;
+  let started = false;
+
+  // Preload all videos
+  function preloadVideo(src) {
+    const v = document.createElement("video");
+    v.src = src;
+    v.preload = "auto";
+    v.muted = true;
+    v.playsInline = true;
+  }
+  Object.values(VIDEOS).forEach(preloadVideo);
+
+  function startExperience() {
+    if (started) return;
+    started = true;
+    tapOverlay.classList.add("hidden");
+    muteBtn.classList.add("show");
+
+    activeVideo.src = VIDEOS.hook;
+    activeVideo.muted = false;
+    activeVideo.volume = 1.0;
+    activeVideo.play().catch(err => {
+      console.warn("Autoplay with sound failed, falling back to muted:", err);
+      activeVideo.muted = true;
+      isMuted = true;
+      updateMuteIcon();
+      activeVideo.play();
+    });
+
+    showButtonsTimer = setTimeout(() => {
+      choices.classList.add("show");
+    }, SHOW_BUTTONS_AFTER_MS);
+  }
+
+  function playVideo(key) {
+    const src = VIDEOS[key];
+    if (!src) return;
+
+    choices.classList.remove("show");
+    choices.classList.add("hiding");
+    if (showButtonsTimer) {
+      clearTimeout(showButtonsTimer);
+      showButtonsTimer = null;
+    }
+
+    inactiveVideo.src = src;
+    inactiveVideo.muted = isMuted;
+    inactiveVideo.volume = 1.0;
+    inactiveVideo.currentTime = 0;
+
+    const onReady = () => {
+      inactiveVideo.removeEventListener("canplay", onReady);
+      inactiveVideo.play().then(() => {
+        inactiveVideo.classList.add("active");
+        activeVideo.classList.remove("active");
+
+        setTimeout(() => {
+          activeVideo.pause();
+          activeVideo.removeAttribute("src");
+          activeVideo.load();
+          const tmp = activeVideo;
+          activeVideo = inactiveVideo;
+          inactiveVideo = tmp;
+        }, 200);
+      }).catch(err => {
+        console.error("Play failed:", err);
+      });
+    };
+    inactiveVideo.addEventListener("canplay", onReady);
+    inactiveVideo.load();
+  }
+
+  function toggleMute() {
+    isMuted = !isMuted;
+    activeVideo.muted = isMuted;
+    inactiveVideo.muted = isMuted;
+    updateMuteIcon();
+  }
+  function updateMuteIcon() {
+    document.getElementById("muteIconOn").style.display = isMuted ? "none" : "block";
+    document.getElementById("muteIconOff").style.display = isMuted ? "block" : "none";
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      activeVideo.pause();
+    } else if (started) {
+      activeVideo.play().catch(() => {});
+    }
+  });
+</script>
+</body>
+</html>
