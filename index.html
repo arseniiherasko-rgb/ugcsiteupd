@@ -90,22 +90,14 @@
   }
 
   .gallery-header {
-    padding: calc(env(safe-area-inset-top, 0) + 28px) 22px 14px;
+    padding: calc(env(safe-area-inset-top, 0) + 36px) 22px 18px;
     flex-shrink: 0;
     text-align: center;
     position: relative;
     z-index: 1;
   }
   @media (min-width: 600px) {
-    .gallery-header { padding-top: 64px; }
-  }
-  .gallery-eyebrow {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: 8px;
+    .gallery-header { padding-top: 72px; }
   }
   .gallery-title {
     font-size: 28px;
@@ -173,27 +165,6 @@
     text-shadow: 0 2px 8px rgba(0,0,0,0.6);
   }
 
-  .play-badge {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1.5px solid rgba(255,255,255,0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-  }
-  .actress-card:active .play-badge { opacity: 1; }
-  .play-badge svg { width: 18px; height: 18px; color: #fff; margin-left: 2px; }
-
   .video-layer {
     position: absolute;
     inset: 0;
@@ -207,55 +178,7 @@
   }
   .video-layer.active { opacity: 1; }
 
-  .tap-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: opacity 0.4s ease;
-  }
-  .tap-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .tap-icon {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.18);
-    border: 2px solid rgba(255,255,255,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    animation: tapPulse 1.6s ease-in-out infinite;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  @keyframes tapPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-    50%      { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255,255,255,0); }
-  }
-  .tap-icon svg { width: 40px; height: 40px; color: #fff; }
-  .tap-text {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  }
-  .tap-sub {
-    margin-top: 6px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.7);
-  }
-
+  /* === Choice buttons — liquid glass === */
   .choices {
     position: absolute;
     bottom: calc(env(safe-area-inset-bottom, 0) + 40px);
@@ -284,9 +207,11 @@
 
   .choice-btn {
     width: 100%;
-    background: rgba(255,255,255,0.92);
-    color: #000;
-    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
     border-radius: 999px;
     padding: 18px 22px;
     font-size: 17px;
@@ -294,10 +219,11 @@
     letter-spacing: 0.3px;
     cursor: pointer;
     font-family: inherit;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     transition: all 0.2s ease;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     animation: btnIn 0.5s cubic-bezier(.34, 1.56, .64, 1) backwards;
   }
   .choices.show .choice-btn:nth-child(1) { animation-delay: 0.0s; }
@@ -309,54 +235,10 @@
   }
   .choice-btn:active {
     transform: scale(0.96);
-    background: #fff;
-  }
-  .choice-btn.primary {
-    background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
-    color: #fff;
-    box-shadow: 0 10px 30px rgba(236, 72, 153, 0.5);
-  }
-  .choice-btn.primary:active {
-    background: linear-gradient(135deg, #db2777 0%, #e11d48 100%);
+    background: rgba(255, 255, 255, 0.25);
   }
 
-  .player-controls {
-    position: absolute;
-    top: calc(env(safe-area-inset-top, 0) + 16px);
-    right: 16px;
-    display: flex;
-    gap: 10px;
-    z-index: 30;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  .player-controls.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  @media (min-width: 600px) {
-    .player-controls { top: 56px; }
-  }
-
-  .ctrl-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .ctrl-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.7); }
-  .ctrl-btn svg { width: 20px; height: 20px; }
-
+  /* Back button - top left */
   .back-btn {
     position: absolute;
     top: calc(env(safe-area-inset-top, 0) + 16px);
@@ -398,8 +280,7 @@
     <div class="screen active" id="screen-gallery">
       <div class="gallery-screen" style="position: absolute; inset: 0; display: flex; flex-direction: column;">
         <div class="gallery-header">
-          <div class="gallery-eyebrow">Choose Your Favorite</div>
-          <div class="gallery-title">Meet the Girls</div>
+          <div class="gallery-title">Choose your AI Agent</div>
         </div>
         <div class="gallery-grid" id="galleryGrid"></div>
       </div>
@@ -414,35 +295,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
 
-      <div class="player-controls" id="playerControls">
-        <button class="ctrl-btn" onclick="toggleMute()" aria-label="Toggle sound">
-          <svg id="muteIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-          </svg>
-          <svg id="muteIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <line x1="23" y1="9" x2="17" y2="15"/>
-            <line x1="17" y1="9" x2="23" y2="15"/>
-          </svg>
-        </button>
-      </div>
-
       <div class="choices" id="choices">
-        <button class="choice-btn primary" onclick="playReaction('dance')">💃 Dance for me</button>
+        <button class="choice-btn" onclick="playReaction('dance')">💃 Dance for me</button>
         <button class="choice-btn" onclick="playReaction('kiss')">💋 Blow a kiss</button>
         <button class="choice-btn" onclick="playReaction('around')">🔄 Turn around</button>
-      </div>
-
-      <div class="tap-overlay" id="tapOverlay" onclick="startExperience()">
-        <div class="tap-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="6 4 20 12 6 20 6 4"/>
-          </svg>
-        </div>
-        <div class="tap-text">Tap to start</div>
-        <div class="tap-sub">Sound enabled</div>
       </div>
     </div>
 
@@ -455,14 +311,14 @@
   // ============================================
 
   // Время в мс до появления кнопок (подгони под длину хука)
-  const SHOW_BUTTONS_AFTER_MS = 2300;
+  const SHOW_BUTTONS_AFTER_MS = 6000;
 
-  // 4 актрисы — пронумерованы 1-4
+  // 4 актрисы с рандомными именами
   const ACTRESSES = [
-    { id: "actress1", name: "Girl 1" },
-    { id: "actress2", name: "Girl 2" },
-    { id: "actress3", name: "Girl 3" },
-    { id: "actress4", name: "Girl 4" }
+    { id: "actress1", name: "Luna" },
+    { id: "actress2", name: "Aria" },
+    { id: "actress3", name: "Zoe"  },
+    { id: "actress4", name: "Mila" }
   ];
 
   // ============================================
@@ -472,16 +328,12 @@
   const videoA = document.getElementById("videoA");
   const videoB = document.getElementById("videoB");
   const choices = document.getElementById("choices");
-  const tapOverlay = document.getElementById("tapOverlay");
-  const playerControls = document.getElementById("playerControls");
   const backBtn = document.getElementById("backBtn");
   const galleryGrid = document.getElementById("galleryGrid");
 
   let activeVideo = videoA;
   let inactiveVideo = videoB;
   let showButtonsTimer = null;
-  let isMuted = false;
-  let started = false;
   let currentActress = null;
 
   // Build gallery cards
@@ -491,9 +343,6 @@
     card.innerHTML = `
       <img class="actress-photo" src="videos/photos/${a.id}.png" alt="${a.name}"
            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #2d1b4e 0%, #ec4899 100%)';">
-      <div class="play-badge">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-      </div>
       <div class="actress-overlay">
         <div class="actress-name">${a.name}</div>
       </div>
@@ -509,18 +358,36 @@
 
   function selectActress(actress) {
     currentActress = actress;
-    started = false;
-    isMuted = false;
-    updateMuteIcon();
 
-    tapOverlay.classList.remove("hidden");
+    // Reset UI
     choices.classList.remove("show", "hiding");
-    playerControls.classList.remove("show");
     backBtn.classList.add("show");
     activeVideo.classList.add("active");
     inactiveVideo.classList.remove("active");
 
     showScreen("screen-player");
+
+    // Start video IMMEDIATELY within click handler — preserves user gesture for iOS audio autoplay
+    activeVideo.src = `videos/${actress.id}/ugchook.mp4`;
+    activeVideo.muted = false;
+    activeVideo.volume = 1.0;
+    activeVideo.currentTime = 0;
+
+    const playPromise = activeVideo.play();
+    if (playPromise && playPromise.catch) {
+      playPromise.catch(err => {
+        // If autoplay with sound fails on some browser, fallback to muted
+        console.warn("Autoplay with sound failed, falling back to muted:", err);
+        activeVideo.muted = true;
+        activeVideo.play().catch(e => console.error("Even muted play failed:", e));
+      });
+    }
+
+    // Show buttons after configured delay
+    if (showButtonsTimer) clearTimeout(showButtonsTimer);
+    showButtonsTimer = setTimeout(() => {
+      choices.classList.add("show");
+    }, SHOW_BUTTONS_AFTER_MS);
   }
 
   function goBackToGallery() {
@@ -535,31 +402,8 @@
     });
     activeVideo = videoA;
     inactiveVideo = videoB;
-    started = false;
     currentActress = null;
     showScreen("screen-gallery");
-  }
-
-  function startExperience() {
-    if (started || !currentActress) return;
-    started = true;
-    tapOverlay.classList.add("hidden");
-    playerControls.classList.add("show");
-
-    activeVideo.src = `videos/${currentActress.id}/ugchook.mp4`;
-    activeVideo.muted = false;
-    activeVideo.volume = 1.0;
-    activeVideo.play().catch(err => {
-      console.warn("Autoplay with sound failed, falling back to muted:", err);
-      activeVideo.muted = true;
-      isMuted = true;
-      updateMuteIcon();
-      activeVideo.play();
-    });
-
-    showButtonsTimer = setTimeout(() => {
-      choices.classList.add("show");
-    }, SHOW_BUTTONS_AFTER_MS);
   }
 
   function playReaction(key) {
@@ -579,7 +423,7 @@
     }
 
     inactiveVideo.src = src;
-    inactiveVideo.muted = isMuted;
+    inactiveVideo.muted = false;
     inactiveVideo.volume = 1.0;
     inactiveVideo.currentTime = 0;
 
@@ -605,21 +449,10 @@
     inactiveVideo.load();
   }
 
-  function toggleMute() {
-    isMuted = !isMuted;
-    activeVideo.muted = isMuted;
-    inactiveVideo.muted = isMuted;
-    updateMuteIcon();
-  }
-  function updateMuteIcon() {
-    document.getElementById("muteIconOn").style.display = isMuted ? "none" : "block";
-    document.getElementById("muteIconOff").style.display = isMuted ? "block" : "none";
-  }
-
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       activeVideo.pause();
-    } else if (started && currentActress) {
+    } else if (currentActress) {
       activeVideo.play().catch(() => {});
     }
   });
