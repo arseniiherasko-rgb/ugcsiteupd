@@ -63,6 +63,137 @@
     }
   }
 
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    animation: fadeIn 0.35s ease;
+  }
+  .screen.active { display: flex; }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .gallery-screen {
+    background: linear-gradient(160deg, #1a0b2e 0%, #0a0418 100%);
+  }
+  .gallery-screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(236, 72, 153, 0.18) 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 45%);
+    pointer-events: none;
+  }
+
+  .gallery-header {
+    padding: calc(env(safe-area-inset-top, 0) + 28px) 22px 14px;
+    flex-shrink: 0;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  @media (min-width: 600px) {
+    .gallery-header { padding-top: 64px; }
+  }
+  .gallery-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+  }
+  .gallery-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, #f9a8d4 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gallery-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    padding: 14px 22px calc(env(safe-area-inset-bottom, 0) + 28px);
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .actress-card {
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 14px 38px rgba(0,0,0,0.4);
+    transition: transform 0.25s cubic-bezier(.4, 1.2, .4, 1);
+  }
+  .actress-card:active { transform: scale(0.95); }
+
+  .actress-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%);
+  }
+
+  .actress-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      transparent 55%,
+      rgba(0,0,0,0.85) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px 14px;
+  }
+
+  .actress-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .play-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .actress-card:active .play-badge { opacity: 1; }
+  .play-badge svg { width: 18px; height: 18px; color: #fff; margin-left: 2px; }
+
   .video-layer {
     position: absolute;
     inset: 0;
@@ -189,17 +320,54 @@
     background: linear-gradient(135deg, #db2777 0%, #e11d48 100%);
   }
 
-  .mute-btn {
+  .player-controls {
     position: absolute;
     top: calc(env(safe-area-inset-top, 0) + 16px);
     right: 16px;
+    display: flex;
+    gap: 10px;
+    z-index: 30;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .player-controls.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media (min-width: 600px) {
+    .player-controls { top: 56px; }
+  }
+
+  .ctrl-btn {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .ctrl-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.7); }
+  .ctrl-btn svg { width: 20px; height: 20px; }
+
+  .back-btn {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0) + 16px);
+    left: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
     color: #fff;
     display: flex;
     align-items: center;
@@ -210,14 +378,14 @@
     opacity: 0;
     pointer-events: none;
   }
-  .mute-btn.show {
+  .back-btn.show {
     opacity: 1;
     pointer-events: auto;
   }
-  .mute-btn:active { transform: scale(0.9); }
-  .mute-btn svg { width: 20px; height: 20px; }
+  .back-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.7); }
+  .back-btn svg { width: 20px; height: 20px; }
   @media (min-width: 600px) {
-    .mute-btn { top: 56px; }
+    .back-btn { top: 56px; }
   }
 </style>
 </head>
@@ -225,37 +393,59 @@
 
 <div class="device-wrap">
   <div class="device">
-    <video class="video-layer active" id="videoA" playsinline webkit-playsinline preload="auto"></video>
-    <video class="video-layer" id="videoB" playsinline webkit-playsinline preload="auto"></video>
 
-    <button class="mute-btn" id="muteBtn" onclick="toggleMute()" aria-label="Toggle sound">
-      <svg id="muteIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-      </svg>
-      <svg id="muteIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-        <line x1="23" y1="9" x2="17" y2="15"/>
-        <line x1="17" y1="9" x2="23" y2="15"/>
-      </svg>
-    </button>
-
-    <div class="choices" id="choices">
-      <button class="choice-btn primary" onclick="playVideo('dance')">💃 Dance for me</button>
-      <button class="choice-btn" onclick="playVideo('kiss')">💋 Blow a kiss</button>
-      <button class="choice-btn" onclick="playVideo('around')">🔄 Turn around</button>
-    </div>
-
-    <div class="tap-overlay" id="tapOverlay" onclick="startExperience()">
-      <div class="tap-icon">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <polygon points="6 4 20 12 6 20 6 4"/>
-        </svg>
+    <!-- SCREEN 1: Gallery 2x2 -->
+    <div class="screen active" id="screen-gallery">
+      <div class="gallery-screen" style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+        <div class="gallery-header">
+          <div class="gallery-eyebrow">Choose Your Favorite</div>
+          <div class="gallery-title">Meet the Girls</div>
+        </div>
+        <div class="gallery-grid" id="galleryGrid"></div>
       </div>
-      <div class="tap-text">Tap to start</div>
-      <div class="tap-sub">Sound enabled</div>
     </div>
+
+    <!-- SCREEN 2: Player -->
+    <div class="screen" id="screen-player">
+      <video class="video-layer active" id="videoA" playsinline webkit-playsinline preload="auto"></video>
+      <video class="video-layer" id="videoB" playsinline webkit-playsinline preload="auto"></video>
+
+      <button class="back-btn" id="backBtn" onclick="goBackToGallery()" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <div class="player-controls" id="playerControls">
+        <button class="ctrl-btn" onclick="toggleMute()" aria-label="Toggle sound">
+          <svg id="muteIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+          <svg id="muteIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="choices" id="choices">
+        <button class="choice-btn primary" onclick="playReaction('dance')">💃 Dance for me</button>
+        <button class="choice-btn" onclick="playReaction('kiss')">💋 Blow a kiss</button>
+        <button class="choice-btn" onclick="playReaction('around')">🔄 Turn around</button>
+      </div>
+
+      <div class="tap-overlay" id="tapOverlay" onclick="startExperience()">
+        <div class="tap-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+          </svg>
+        </div>
+        <div class="tap-text">Tap to start</div>
+        <div class="tap-sub">Sound enabled</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -264,17 +454,16 @@
   // CONFIG
   // ============================================
 
-  // Время в МИЛЛИСЕКУНДАХ, через которое появятся кнопки после старта.
-  // 2000 = 2 секунд. Подбери под длину хук-фразы.
-  const SHOW_BUTTONS_AFTER_MS = 1000;
+  // Время в мс до появления кнопок (подгони под длину хука)
+  const SHOW_BUTTONS_AFTER_MS = 6000;
 
-  // Пути к видео в папке videos/
-  const VIDEOS = {
-    hook:   "videos/ugchook.mp4",     // стартовый хук
-    dance:  "videos/ugcdance.mp4",    // Dance for me
-    kiss:   "videos/ugckiss.mp4",     // Blow a kiss
-    around: "videos/ugcaround.mp4"    // Turn around
-  };
+  // 4 актрисы — пронумерованы 1-4
+  const ACTRESSES = [
+    { id: "actress1", name: "Girl 1" },
+    { id: "actress2", name: "Girl 2" },
+    { id: "actress3", name: "Girl 3" },
+    { id: "actress4", name: "Girl 4" }
+  ];
 
   // ============================================
   // LOGIC
@@ -283,32 +472,81 @@
   const videoA = document.getElementById("videoA");
   const videoB = document.getElementById("videoB");
   const choices = document.getElementById("choices");
-  const muteBtn = document.getElementById("muteBtn");
   const tapOverlay = document.getElementById("tapOverlay");
+  const playerControls = document.getElementById("playerControls");
+  const backBtn = document.getElementById("backBtn");
+  const galleryGrid = document.getElementById("galleryGrid");
 
   let activeVideo = videoA;
   let inactiveVideo = videoB;
   let showButtonsTimer = null;
   let isMuted = false;
   let started = false;
+  let currentActress = null;
 
-  // Preload all videos
-  function preloadVideo(src) {
-    const v = document.createElement("video");
-    v.src = src;
-    v.preload = "auto";
-    v.muted = true;
-    v.playsInline = true;
+  // Build gallery cards
+  ACTRESSES.forEach((a) => {
+    const card = document.createElement("div");
+    card.className = "actress-card";
+    card.innerHTML = `
+      <img class="actress-photo" src="videos/photos/${a.id}.png" alt="${a.name}"
+           onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #2d1b4e 0%, #ec4899 100%)';">
+      <div class="play-badge">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+      </div>
+      <div class="actress-overlay">
+        <div class="actress-name">${a.name}</div>
+      </div>
+    `;
+    card.addEventListener("click", () => selectActress(a));
+    galleryGrid.appendChild(card);
+  });
+
+  function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
   }
-  Object.values(VIDEOS).forEach(preloadVideo);
+
+  function selectActress(actress) {
+    currentActress = actress;
+    started = false;
+    isMuted = false;
+    updateMuteIcon();
+
+    tapOverlay.classList.remove("hidden");
+    choices.classList.remove("show", "hiding");
+    playerControls.classList.remove("show");
+    backBtn.classList.add("show");
+    activeVideo.classList.add("active");
+    inactiveVideo.classList.remove("active");
+
+    showScreen("screen-player");
+  }
+
+  function goBackToGallery() {
+    if (showButtonsTimer) {
+      clearTimeout(showButtonsTimer);
+      showButtonsTimer = null;
+    }
+    [videoA, videoB].forEach(v => {
+      v.pause();
+      v.removeAttribute("src");
+      v.load();
+    });
+    activeVideo = videoA;
+    inactiveVideo = videoB;
+    started = false;
+    currentActress = null;
+    showScreen("screen-gallery");
+  }
 
   function startExperience() {
-    if (started) return;
+    if (started || !currentActress) return;
     started = true;
     tapOverlay.classList.add("hidden");
-    muteBtn.classList.add("show");
+    playerControls.classList.add("show");
 
-    activeVideo.src = VIDEOS.hook;
+    activeVideo.src = `videos/${currentActress.id}/ugchook.mp4`;
     activeVideo.muted = false;
     activeVideo.volume = 1.0;
     activeVideo.play().catch(err => {
@@ -324,9 +562,14 @@
     }, SHOW_BUTTONS_AFTER_MS);
   }
 
-  function playVideo(key) {
-    const src = VIDEOS[key];
-    if (!src) return;
+  function playReaction(key) {
+    if (!currentActress) return;
+    const fileMap = {
+      dance:  "ugcdance.mp4",
+      kiss:   "ugckiss.mp4",
+      around: "ugcaround.mp4"
+    };
+    const src = `videos/${currentActress.id}/${fileMap[key]}`;
 
     choices.classList.remove("show");
     choices.classList.add("hiding");
@@ -376,7 +619,7 @@
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       activeVideo.pause();
-    } else if (started) {
+    } else if (started && currentActress) {
       activeVideo.play().catch(() => {});
     }
   });
